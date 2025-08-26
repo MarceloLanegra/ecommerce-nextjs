@@ -41,8 +41,8 @@ function CategoriesSidebar({ open, onOpenChange }: CategoriesSidebarProps) {
   }
 
   const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
-    if (category.subcategories && category.subcategories.length > 0) {
-      setParentCategories(category.subcategories as CategoriesGetManyOutput)
+    if (category.subcategories && Array.isArray(category.subcategories)) {
+      setParentCategories(category.subcategories as unknown as CategoriesGetManyOutput)
       setSelectedCategory(category)
     } else {
       // This is a leaf category (no subcategories)
