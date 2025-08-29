@@ -33,11 +33,11 @@ function CategoryDropdown({
 
   const dropdownPosition = getDropdownPosition()
 
-  const toggleDropdown = () => {
-    if (category.subcategories && category.subcategories.length > 0) {
-      setIsOpen(!isOpen)
-    }
-  }
+  // const toggleDropdown = () => {
+  //   if (category.subcategories && category.subcategories.length > 0) {
+  //     setIsOpen(!isOpen)
+  //   }
+  // }
 
   return (
     <div
@@ -45,10 +45,11 @@ function CategoryDropdown({
       ref={dropdownRef}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      onClick={toggleDropdown}
+      // onClick={toggleDropdown}
     >
       <div className='relative'>
         <Button
+          asChild
           variant='elevated'
           aria-expanded={isOpen}
           aria-haspopup='true'
