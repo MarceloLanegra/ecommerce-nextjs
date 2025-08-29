@@ -1,11 +1,18 @@
-'use client'
+"use client"
 
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useTRPC } from "@/trpc/client"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Poppins } from "next/font/google"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,12 +29,39 @@ function SignInView() {
   const router = useRouter()
 
   const trpc = useTRPC()
+  const queryClient = useQueryClient()
+
   const login = useMutation(
     trpc.auth.login.mutationOptions({
       onError: (error) => toast.error(error.message),
-      onSuccess: () => router.push("/"),
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter())
+        router.push("/")
+      },
     })
   )
+
+  // Other way to implement Log in
+  // const login = useMutation({
+  //   mutationFn: async (values: z.infer<typeof loginSchema>) => {
+  //     const response = await fetch('/api/users/login', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(values),
+  //     })
+
+  //     if (!response.ok) {
+  //       const error = await response.json()
+  //       throw new Error(error.message)
+  //     }
+
+  //     return response.json()
+  //   },
+  //   onError: (error) => toast.error(error.message),
+  //   onSuccess: () => router.push("/"),
+  // })
 
   const form = useForm<z.infer<typeof loginSchema>>({
     mode: "all",
@@ -69,9 +103,7 @@ function SignInView() {
                 </Link>
               </Button>
             </div>
-            <h1 className='text-4xl font-medium'>
-              Welcome back to funroad.
-            </h1>
+            <h1 className='text-4xl font-medium'>Welcome back to funroad.</h1>
             <FormField
               name='email'
               render={({ field }) => (
@@ -108,7 +140,7 @@ function SignInView() {
           </form>
         </Form>
       </div>
-      <div className='h-screen w-full lg:col-span-2 hidden lg:flex items-center justify-center'>
+      <div className='h-screen w-full lg:col-span-2 hidden lg:flex items-center justify-center p-4'>
         <Image
           src='/sign-up-bg.svg'
           alt='Sign up background'
