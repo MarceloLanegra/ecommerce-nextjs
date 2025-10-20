@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useTRPC } from "@/trpc/client"
 import { useSuspenseQuery } from "@tanstack/react-query"
@@ -10,20 +10,25 @@ interface ProductListProps {
 function ProductList({ category }: ProductListProps) {
   const trpc = useTRPC()
 
-  const { data } = useSuspenseQuery(trpc.products.getMany.queryOptions({ category }))
+  const { data } = useSuspenseQuery(
+    trpc.products.getMany.queryOptions({ category })
+  )
 
   return (
-    <div>
-      <h1>Product List</h1>
-      {JSON.stringify(data)}
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4'>
+      {data.docs.map((product) => (
+        <div key={product.id} className='border rounded-md bg-white'>
+          <h2  className="text-xl font-medium">{product.name}</h2>
+          <p>{product.description}</p>
+          <p>${product.price}</p>
+        </div>
+      ))}
     </div>
   )
 }
 
 export const ProductListLoading = () => {
-  return (
-    <div>Loading...</div>
-  )
+  return <div>Loading...</div>
 }
 
 export default ProductList
